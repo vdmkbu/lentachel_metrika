@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Metrika\helpers\Options;
 use App\Metrika\Report;
 use Illuminate\Http\Request;
 
@@ -20,12 +21,11 @@ class StatController extends Controller
         // TODO: готовим даты в отдельном классе или хелпере
         $now = new \DateTime();
         $nowMonth = $now->format('m');
-        $halfYearAgo = $now->modify('-12 month');
-        $halfYearAgoString = $halfYearAgo->format('Y-m-d');
-        list($halfYearAgoY,$halfYearAgoM, $halfYearAgoD) = explode('-',$halfYearAgoString);
-        $halfYearAgo = "{$halfYearAgoY}-{$halfYearAgoM}-01";
-        // start
-        $date1 = $halfYearAgo;
+        $oneYearAgo = $now->modify('-12 month');
+        $oneYearAgoString = $oneYearAgo->format('Y-m-d');
+        list($oneYearAgoY,$oneYearAgoM, $oneYearAgoD) = explode('-',$oneYearAgoString);
+        $oneYearAgo = "{$oneYearAgoY}-{$oneYearAgoM}-01";
+        $date1 = $oneYearAgo;
 
         // end - dont show current month, use flag "t"
         $date2 = new \DateTime();
@@ -33,25 +33,18 @@ class StatController extends Controller
         $date2 = $date2->format('Y-m-t');
 
 
-        // TODO: формируем options динамически - добавить класс
-        $preset = "sources_summary";
-        $metrics = "ym:s:visits";
-        //$metrics = "ym:s:users"; // посетители
-        $group = "month";
 
-        $options = array(
-            'preset'=>$preset,
-            'date1'=>$date1,
-            'date2'=>$date2,
-            'metrics'=>$metrics,
-            'ids'=>$id,
-            'group'=>$group
-        );
-
+        $options = new Options();
+        $options = $options->setPreset("sources_summary")
+                    ->setMetrics("ym:s:visits")
+                    ->setGroup("month")
+                    ->setDate1($date1)
+                    ->setDate2($date2)
+                    ->setId($id)
+                    ->toArray();
 
 
         $report = new Report($token, $id);
-
         $data = $report->getStatByTime($options);
 
         $result = json_decode($data);
