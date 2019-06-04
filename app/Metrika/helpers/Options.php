@@ -43,6 +43,18 @@ class Options
         return $this;
     }
 
+    public function setLimit($limit)
+    {
+        $this->options['limit'] = $limit;
+        return $this;
+    }
+
+    public function setDimensions($dimensions)
+    {
+        $this->options['dimensions'] = $dimensions;
+        return $this;
+    }
+
     public function toArray()
     {
         return $this->options;
