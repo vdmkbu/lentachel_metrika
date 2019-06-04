@@ -62,4 +62,19 @@ class StatController extends Controller
 
         return response()->json($metValueStorage, 200);
     }
+
+    public function getInteres()
+    {
+
+    }
+
+    public function getGender()
+    {
+
+    }
+
+    public function getAge()
+    {
+
+    }
 }

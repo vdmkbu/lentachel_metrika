@@ -18,3 +18,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::get('/metrika/stat/get/visits', 'StatController@getVisits');
+Route::get('/metrika/stat/get/interes', 'StatController@getInteres');
+Route::get('/metrika/stat/get/gender', 'StatController@getGender');
+Route::get('/metrika/stat/get/age', 'StatController@getAge');
