@@ -49,8 +49,8 @@ class StatController extends Controller
 
         $result = json_decode($data);
 
-        $timeVlaueStorage = getTimeValueStorage($result->time_intervals);
-        $metValueStorage = getMetValueStorageTotal($result->totals[0], $timeVlaueStorage);
+        $timeValueStorage = getTimeValueStorage($result->time_intervals);
+        $metValueStorage = getMetValueStorageTotal($result->totals[0], $timeValueStorage);
 
         // преобразуем в читаемую дату
         foreach($metValueStorage as $index => $metValue) {
@@ -58,9 +58,8 @@ class StatController extends Controller
             $metValueStorage[$index][0] = $prettyDate;
         }
 
-        $metValueJson = json_encode($metValueStorage, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
 
 
-        return $metValueJson;
+        return response()->json($metValueStorage, 200);
     }
 }
