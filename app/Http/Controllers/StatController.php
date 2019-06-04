@@ -127,8 +127,50 @@ class StatController extends Controller
 
     }
 
+    /**
+     *  Получаем статистику по полу посетителей за последние 12 месяцев
+     *
+     */
     public function getGender()
     {
+        $token = env('METRIKA_TOKEN');
+        $id = "28982035";
+
+        $now = new \DateTime();
+        $nowMonth = $now->format('m');
+        $oneYearAgo = $now->modify('-12 month');
+        $oneYearAgoString = $oneYearAgo->format('Y-m-d');
+        list($oneYearAgoY,$oneYearAgoM, $oneYearAgoD) = explode('-',$oneYearAgoString);
+        $oneYearAgo = "{$oneYearAgoY}-{$oneYearAgoM}-01";
+        // start
+        $date1 = $oneYearAgo;
+
+        // end - dont show current month, use flag "t"
+        $date2 = new \DateTime();
+        $date2 = $date2->modify('-1 month');
+        $date2 = $date2->format('Y-m-t');
+
+        $options = new Options();
+        $options = $options->setDimensions("ym:s:gender")
+                            ->setMetrics("ym:s:womanPercentage,ym:s:manPercentage")
+                            ->setGroup("all")
+                            ->setDate1($date1)
+                            ->setDate2($date2)
+                            ->setId($id)
+                            ->toArray();
+
+        $report = new Report($token, $id);
+        $data = $report->getStatByTime($options);
+
+        $result = json_decode($data);
+
+        $woman = round($result->totals[0][0],1);
+        $man = round($result->totals[1][0],1);
+
+        $genderArray[] = array('Женский',$woman);
+        $genderArray[] = array('Мужской',$man);
+
+        return response()->json($genderArray, 200);
 
     }
 
