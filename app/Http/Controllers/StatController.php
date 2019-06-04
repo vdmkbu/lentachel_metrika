@@ -51,8 +51,12 @@ class StatController extends Controller
 
         $result = json_decode($data);
 
+        // получим описание всех временных интервалов 06.2018, 07.2018 и т.д.
         $timeValueStorage = getTimeValueStorage($result->time_intervals);
+
+        // получим значения по метрике "посетители" для всех временных интевалов: 903000 для 06.2018, 2471000 для 07.2018 и т.д.
         $metValueStorage = getMetValueStorageTotal($result->totals[0], $timeValueStorage);
+
 
         // преобразуем в читаемую дату
         foreach($metValueStorage as $index => $metValue) {
@@ -106,10 +110,16 @@ class StatController extends Controller
         // общее количество
         $total = 0;
 
+
         foreach($result->data as $id => $content) {
+
+            // название интереса: туризм, обустройство и т.д.
             $dimensions = $content->dimensions;
+
+            // значение метрики "визиты" для интереса туризм, обустройство и т.д.
             $metrics = $content->metrics;
 
+            // формируем результирующий массив: название интереса, кол-во визитов
             foreach($dimensions as $dimId => $dim) {
                 $total += $metrics[0];
                 $arrayOfColumn[] = array($dim->name,$metrics[0]);
@@ -122,6 +132,8 @@ class StatController extends Controller
         foreach($arrayOfColumn as $id=>&$data) {
             $data[1] = (int)$data[1];
         }
+
+
 
         return response()->json($arrayOfColumn, 200);
 
