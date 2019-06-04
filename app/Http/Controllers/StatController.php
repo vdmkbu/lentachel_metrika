@@ -174,8 +174,61 @@ class StatController extends Controller
 
     }
 
+    /**
+     * Получаем статистику по возрасту посетителей за последние 12 месяцев
+     *
+     */
     public function getAge()
     {
+        $token = env('METRIKA_TOKEN');
+        $id = "28982035";
 
+        $now = new \DateTime();
+        $nowMonth = $now->format('m');
+        $oneYearAgo = $now->modify('-12 month');
+        $oneYearAgoString = $oneYearAgo->format('Y-m-d');
+        list($oneYearAgoY,$oneYearAgoM, $oneYearAgoD) = explode('-',$oneYearAgoString);
+        $oneYearAgo = "{$oneYearAgoY}-{$oneYearAgoM}-01";
+        // start
+        $date1 = $oneYearAgo;
+
+        // end - dont show current month, use flag "t"
+        $date2 = new \DateTime();
+        $date2 = $date2->modify('-1 month');
+        $date2 = $date2->format('Y-m-t');
+
+        $options = new Options();
+        $options = $options->setDimensions("ym:s:ageInterval")
+                            ->setMetrics("ym:s:under18AgePercentage,ym:s:upTo24AgePercentage,ym:s:upTo34AgePercentage,ym:s:upTo44AgePercentage,ym:s:over44AgePercentage")
+                            ->setGroup("all")
+                            ->setDate1($date1)
+                            ->setDate2($date2)
+                            ->setId($id)
+                            ->toArray();
+
+        $report = new Report($token, $id);
+        $data = $report->getStatByTime($options);
+
+        $result = json_decode($data);
+
+
+        // получения массив с процентам по возрастам
+        foreach($result->totals as $id=>$value) {
+            $valueStorage[] = round($value[0],1);
+        }
+
+        // получим все описания метрик - младше 18, 18-24 и т.д.
+        $dimNameStorage = getDimNameStorage($result->data);
+
+
+        // сформируем результирующий массив - метрики и проценты
+        foreach($dimNameStorage as $index => $column) {
+            // если всех метрик больше, чем в элементов в valueStorage
+            if($index == count($valueStorage)) break;
+
+            $ageArray[] = array($column,$valueStorage[$index]);
+        }
+
+        return response()->json($ageArray, 200);
     }
 }
