@@ -55,6 +55,18 @@ class Options
         return $this;
     }
 
+    public function setTitle($title)
+    {
+        $this->options['title'] = $title;
+        return $this;
+    }
+
+    public function setAccuracy($accuracy)
+    {
+        $this->options['accuracy'] = $accuracy;
+        return $this;
+    }
+
     public function toArray()
     {
         return $this->options;
