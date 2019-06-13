@@ -21,3 +21,12 @@ Route::get('/metrika/stat/get/visits', 'StatController@getVisits');
 Route::get('/metrika/stat/get/interes', 'StatController@getInteres');
 Route::get('/metrika/stat/get/gender', 'StatController@getGender');
 Route::get('/metrika/stat/get/age', 'StatController@getAge');
+
+Route::get('/metrika/report/author/get', 'AuthorReportController@get');
+Route::get('/metrika/report/author/reset', 'AuthorReportController@reset');
+Route::get('/metrika/report/author/store', 'AuthorReportController@store');
+
+
+Route::get('/metrika/report/title/get', 'TitleReportController@get');
+Route::get('/metrika/report/title/reset', 'TitleReportController@reset');
+Route::get('/metrika/report/title/store', 'TitleReportController@store');
