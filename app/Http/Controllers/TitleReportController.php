@@ -57,7 +57,7 @@ class TitleReportController extends Controller
             ->setId($id)
             ->setGroup("all")
             ->setAccuracy(1)
-            ->setLimit(100)
+            ->setLimit(100000)
             ->setTitle("Адрес+страницы")
             ->toArray();
 
