@@ -17,7 +17,7 @@ class AuthorReportController extends Controller
     {
         $url = \request()->input('url');
         if(!$url)
-            abort(404);
+            abort(404, "Не передан параметр url");
 
         $sum = AuthorReport::where('url', 'like', '%'.$url.'%')->sum('count');
 
