@@ -9,9 +9,16 @@ use Illuminate\Http\Request;
 
 class AuthorReportController extends Controller
 {
+    /**
+     * Получим сумму по полю count для переданного URL
+     *
+     */
     public function get()
     {
+        $url = \request()->input('url');
+        $sum = AuthorReport::where('url', 'like', '%'.$url.'%')->sum('count');
 
+        return $sum;
     }
 
     /**
