@@ -16,6 +16,9 @@ class AuthorReportController extends Controller
     public function get()
     {
         $url = \request()->input('url');
+        if(!$url)
+            abort(404);
+
         $sum = AuthorReport::where('url', 'like', '%'.$url.'%')->sum('count');
 
         return $sum;
