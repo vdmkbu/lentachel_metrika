@@ -16,7 +16,7 @@ class CreateTitleReportsTable extends Migration
         Schema::create('title_reports', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->dateTime('date');
-            $table->string('title');
+            $table->text('title');
             $table->bigInteger('count');
             $table->timestamps();
         });

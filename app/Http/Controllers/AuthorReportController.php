@@ -19,22 +19,28 @@ class AuthorReportController extends Controller
 
     }
 
+
+    /**
+     * Сохраним данные из отчёта по авторам
+     *
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
     public function store()
     {
 
         $token = env('METRIKA_TOKEN');
         $id = "28982035";
 
-        $start = (string)\request()->input('start');
-        $end = (string)\request()->input('end');
+        $start = \request()->input('start');
+        $end = \request()->input('end');
 
         $options = new Options();
         $options = $options->setDimensions("ym:s:date,ym:s:startURLPathFull")
             ->setMetrics("ym:s:users")
             ->setGroup("all")
-            ->setLimit(100)
-            ->setDate1("2019-05-01")
-            ->setDate2("2019-06-01")
+            ->setLimit(10000)
+            ->setDate1($start)
+            ->setDate2($end)
             ->setId($id)
             ->setTitle("Адрес+страницы")
             ->setAccuracy(1)
@@ -52,19 +58,27 @@ class AuthorReportController extends Controller
             $dimensions = $item->dimensions;
             $metrics = $item->metrics;
 
+
             $current_date = $dimensions[0]->name;
             $url = $dimensions[1]->name;
             $count = $metrics[0];
 
 
-            AuthorReport::create([
-                'date' => $current_date,
-                'url' => $url,
-                'count' => $count
-            ]);
+            $rows[] = [
+                    'date' => $current_date,
+                    'url' => $url,
+                    'count' => $count
+                ];
 
         }
 
+
+        $result = false;
+        if (!empty($rows)) {
+            $result = AuthorReport::insert($rows);
+        }
+
+        return response(['result' => $result], 200);
 
     }
 }

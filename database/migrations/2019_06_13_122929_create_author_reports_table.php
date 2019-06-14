@@ -16,7 +16,7 @@ class CreateAuthorReportsTable extends Migration
         Schema::create('author_reports', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->dateTime('date');
-            $table->string('url');
+            $table->text('url');
             $table->bigInteger('count');
             $table->timestamps();
         });
