@@ -14,9 +14,15 @@ class AuthorReportController extends Controller
 
     }
 
+    /**
+     * Очищаем таблицу с отчётом
+     *
+     */
     public function reset()
     {
+        $result = AuthorReport::truncate();
 
+        return response(['result' => $result], 200);
     }
 
 
@@ -69,6 +75,7 @@ class AuthorReportController extends Controller
                     'url' => $url,
                     'count' => $count
                 ];
+
 
         }
 
