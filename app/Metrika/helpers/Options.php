@@ -67,6 +67,30 @@ class Options
         return $this;
     }
 
+    public function setFilters($filters)
+    {
+        $this->options['filters'] = $filters;
+        return $this;
+    }
+
+    public function setTopKeys($top_keys)
+    {
+        $this->options['top_keys'] = $top_keys;
+        return $this;
+    }
+
+    public function setTable($table)
+    {
+        $this->options['table'] = $table;
+        return $this;
+    }
+
+    public function setSort($sort)
+    {
+        $this->options['sort'] = $sort;
+        return $this;
+    }
+
     public function toArray()
     {
         return $this->options;

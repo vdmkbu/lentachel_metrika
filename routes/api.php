@@ -30,3 +30,6 @@ Route::get('/metrika/report/author/store', 'AuthorReportController@store');
 Route::get('/metrika/report/title/get', 'TitleReportController@get');
 Route::get('/metrika/report/title/reset', 'TitleReportController@reset');
 Route::get('/metrika/report/title/store', 'TitleReportController@store');
+
+Route::get('/metrika/subscribe/weekly', 'SubscribeController@getWeekly');
+Route::get('/metrika/subscribe/daily', 'SubscribeController@getDaily');
