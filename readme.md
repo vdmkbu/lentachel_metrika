@@ -2,30 +2,32 @@
 api для получения данных из яндекс метрики для сайта lentachel.ru
 
 ### API для статистики  
-
+  
 #####Получаем данные по посетителям за последние 12 месяцев
+  
 ```http request
 GET /api/metrika/stat/get/visits
 ``` 
 ![Альтернативный текст](https://lentachel.ru/netcat_files/userfiles/static/stat.png)  
 
   
-#####получаем данные по долгосрочным интересам за последние 12 месяцев
+##### получаем данные по долгосрочным интересам за последние 12 месяцев
 ```http request
 GET /api/metrika/stat/get/interes
 ```    
 ![Альтернативный текст](https://lentachel.ru/netcat_files/userfiles/static/interes.png?1559409539)
 
-
-#####получаем данные по полу посетителей за последние 12 месяцев
-
+  
+##### получаем данные по полу посетителей за последние 12 месяцев
+  
 ```http request
 GET /api/metrika/stat/get/gender
 ```  
 ![Альтернативный текст](https://lentachel.ru/netcat_files/userfiles/static/gender.png?1559409536)
 
-
-#####получаем данные по возрасту посетителей за последние 12 месяцев
+  
+##### получаем данные по возрасту посетителей за последние 12 месяцев
+  
 ```http request
 GET /api/metrika/stat/get/age
 ```
