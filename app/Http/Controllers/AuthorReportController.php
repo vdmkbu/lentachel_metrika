@@ -55,7 +55,7 @@ class AuthorReportController extends Controller
         $options = $options->setDimensions("ym:s:startURLPathFull")
             ->setMetrics("ym:s:users")
             ->setGroup("all")
-            ->setLimit(10000)
+            ->setLimit(20000)
             ->setDate1($start)
             ->setDate2($end)
             ->setId($id)
