@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\AuthorReport;
 use App\Metrika\helpers\Options;
 use App\Metrika\Report;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class AuthorReportController extends Controller
@@ -51,7 +52,7 @@ class AuthorReportController extends Controller
         $end = \request()->input('end');
 
         $options = new Options();
-        $options = $options->setDimensions("ym:s:date,ym:s:startURLPathFull")
+        $options = $options->setDimensions("ym:s:startURLPathFull")
             ->setMetrics("ym:s:users")
             ->setGroup("all")
             ->setLimit(10000)
@@ -75,13 +76,13 @@ class AuthorReportController extends Controller
             $metrics = $item->metrics;
 
 
-            $current_date = $dimensions[0]->name;
-            $url = $dimensions[1]->name;
+
+            $url = $dimensions[0]->name;
             $count = $metrics[0];
 
 
             $rows[] = [
-                    'date' => $current_date,
+                    'date' => Carbon::now(),
                     'url' => $url,
                     'count' => $count
                 ];
