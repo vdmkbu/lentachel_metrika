@@ -8,6 +8,6 @@ RUN apk add php7-mysqli
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/bin --filename=composer --quiet
+RUN curl -sS https://getcomposer.org/installer | php -- --version=1.9.1 --install-dir=/bin --filename=composer --quiet
 
 WORKDIR /var/www
