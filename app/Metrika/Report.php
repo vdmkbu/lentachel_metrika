@@ -7,11 +7,13 @@ class Report
 {
     private $oauth_token;
     private $id;
+    private Metrika $metrika;
 
-    public function __construct($oauth_token, $id)
+    public function __construct($oauth_token, $id, Metrika $metrika)
     {
         $this->oauth_token = $oauth_token;
         $this->id = $id;
+        $this->metrika = $metrika;
     }
 
     public function getToken()
@@ -26,22 +28,18 @@ class Report
 
     public function getStatByTime($options)
     {
-        $token = $this->getToken();
 
         $method = "/stat/v1/data/bytime";
-        $metrika = new Metrika($token);
-        $result = $metrika->execute("GET", $method, $options);
+        $result = $this->metrika->execute("GET", $method, $options);
 
         return $result;
     }
 
     public function getStatByData($options)
     {
-        $token = $this->getToken();
 
         $method = "/stat/v1/data";
-        $metrika = new Metrika($token);
-        $result = $metrika->execute("GET", $method, $options);
+        $result = $this->metrika->execute("GET", $method, $options);
 
         return $result;
     }

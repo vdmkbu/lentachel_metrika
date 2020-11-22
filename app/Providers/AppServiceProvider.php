@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Metrika\Metrika;
 use App\Metrika\Report;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema; //Import Schema
@@ -18,7 +19,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(Report::class, function ($app) {
             $token = env('METRIKA_TOKEN');
             $id = env('METRIKA_ID');
-            return new Report($token, $id);
+            return new Report($token, $id, new Metrika($token));
+        });
+
+        $this->app->singleton(Metrika::class, function ($app) {
+            return new Metrika(env('METRIKA_TOKEN'));
         });
     }
 
