@@ -8,8 +8,8 @@ use Illuminate\Http\Request;
 
 class SubscribeController extends Controller
 {
-    private $options;
-    private $report;
+    private Options $options;
+    private Report $report;
 
     public function __construct(Options $options, Report $report)
     {

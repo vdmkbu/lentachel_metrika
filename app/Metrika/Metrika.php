@@ -7,8 +7,8 @@ use GuzzleHttp\Client;
 
 class Metrika
 {
-    private $oauth_token;
-    private $url;
+    private string $oauth_token;
+    private string $url;
 
     public function __construct($oauth_token)
     {

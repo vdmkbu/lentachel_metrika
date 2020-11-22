@@ -5,7 +5,7 @@ namespace App\Metrika\helpers;
 
 class Options
 {
-    protected $options = [];
+    protected array $options = [];
 
     public function setPreset($preset)
     {

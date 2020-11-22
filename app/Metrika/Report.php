@@ -5,8 +5,8 @@ namespace App\Metrika;
 
 class Report
 {
-    private $oauth_token;
-    private $id;
+    private string $oauth_token;
+    private string $id;
     private Metrika $metrika;
 
     public function __construct($oauth_token, $id, Metrika $metrika)
