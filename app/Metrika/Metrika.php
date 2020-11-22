@@ -56,7 +56,7 @@ class Metrika
 
         } catch (GuzzleException $e) {
 
-            dd($e->getMessage());
+            return response(['error' => $e->getMessage()],200);
         }
 
 
