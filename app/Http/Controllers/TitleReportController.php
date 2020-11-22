@@ -7,9 +7,20 @@ use App\Metrika\Report;
 use App\TitleReport;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TitleReportController extends Controller
 {
+
+    private Options $options;
+    private Report $report;
+
+    public function __construct(Options $options, Report $report)
+    {
+        $this->options = $options;
+        $this->report = $report;
+    }
+
     /**
      * Получим сумму по полю count для переданного title
      *
@@ -22,9 +33,8 @@ class TitleReportController extends Controller
         if(!$title)
             abort(404, "Пустой параметр title");
 
-        $sum = TitleReport::where('title', 'like', $title)->sum('count');
 
-        return $sum;
+        return TitleReport::where('title', 'like', $title)->sum('count');
     }
 
     /**
@@ -33,8 +43,8 @@ class TitleReportController extends Controller
      */
     public function reset()
     {
-        $result = TitleReport::truncate();
-        return response(['result' => $result], 200);
+        TitleReport::truncate();
+        return response(['result' => true], 200);
     }
 
     /**
@@ -44,26 +54,22 @@ class TitleReportController extends Controller
      */
     public function store()
     {
-        $token = env('METRIKA_TOKEN');
-        $id = "28982035";
 
         $start = \request()->input('start');
         $end = \request()->input('end');
 
-        $options = new Options();
-        $options = $options->setPreset("titles")
+        $options = $this->options->setPreset("titles")
             ->setDate1($start)
             ->setDate2($end)
-            ->setId($id)
+            ->setId(env('METRIKA_ID'))
             ->setGroup("all")
             ->setAccuracy(1)
             ->setLimit(100000)
             ->setTitle("Адрес+страницы")
             ->toArray();
 
-        $report = new Report($token, $id);
 
-        $data = $report->getStatByData($options);
+        $data = $this->report->getStatByData($options);
         $result = json_decode($data);
 
         foreach($result->data as $data=>$item) {
@@ -85,11 +91,13 @@ class TitleReportController extends Controller
 
         }
 
-        $result = false;
+
         if (!empty($rows)) {
-            $result = TitleReport::insert($rows);
+
+            DB::table('title_reports')->insert($rows);
+            return response(['result' => true], 200);
         }
 
-        return response(['result' => $result], 200);
+        return response(['result' => false], 200);
     }
 }
