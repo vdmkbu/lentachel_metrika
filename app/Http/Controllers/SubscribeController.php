@@ -8,11 +8,17 @@ use Illuminate\Http\Request;
 
 class SubscribeController extends Controller
 {
+    private $options;
+    private $report;
+
+    public function __construct(Options $options, Report $report)
+    {
+        $this->options = $options;
+        $this->report = $report;
+    }
 
     public function getWeekly()
     {
-        $token = env('METRIKA_TOKEN');
-        $id = "28982035";
 
         $date = new \DateTime();
 
@@ -39,8 +45,7 @@ class SubscribeController extends Controller
             $filterPeriod = " and ym:pv:URLPathFull=~'.*($filterPeriod)'";
 
         // Источники - сводка
-        $options = new Options();
-        $options = $options->setPreset("sources_summary")
+        $options = $this->options->setPreset("sources_summary")
             ->setDimensions("ym:pv:URLHash")
             ->setMetrics("ym:pv:pageviews")
             ->setGroup("day")
@@ -48,15 +53,13 @@ class SubscribeController extends Controller
             ->setSort("-ym:pv:pageviews")
             ->setDate1($date1)
             ->setDate2($date2)
-            ->setId($id)
+            ->setId(env('METRIKA_ID'))
             ->setTable("hits")
             ->setTitle("Адрес+страницы")
             ->setTopKeys(30)
             ->toArray();
 
-        $report = new Report($token, $id);
-
-        $data = $report->getStatByTime($options);
+        $data = $this->report->getStatByTime($options);
         $result = json_decode($data);
 
         // получаем ссылки
@@ -67,9 +70,6 @@ class SubscribeController extends Controller
 
     public function getDaily()
     {
-        $token = env('METRIKA_TOKEN');
-        $id = "28982035";
-
         $date = new \DateTime();
         $date1 = $date->format('Y-m-d');
         $date2 = $date1;
@@ -78,12 +78,11 @@ class SubscribeController extends Controller
         $filterDate = $filterDate->format('Y/m/d');
 
         // Источники - сводка
-        $options = new Options();
-        $options = $options->setDate1($date1)
+        $options = $this->options->setDate1($date1)
             ->setDate2($date2)
             ->setDimensions("ym:pv:URLHash")
             ->setMetrics("ym:pv:pageviews")
-            ->setId($id)
+            ->setId(env('METRIKA_ID'))
             ->setGroup("day")
             ->setFilters("ym:pv:URLPathFull=~'.*(/news/{$filterDate})' and ym:pv:URLPathFull=~'.*(.html)'")
             ->setSort("-ym:pv:pageviews")
@@ -92,9 +91,7 @@ class SubscribeController extends Controller
             ->setTopKeys(30)
             ->toArray();
 
-        $report = new Report($token, $id);
-
-        $data = $report->getStatByTime($options);
+        $data = $this->report->getStatByTime($options);
         $result = json_decode($data);
 
         // получаем ссылки
