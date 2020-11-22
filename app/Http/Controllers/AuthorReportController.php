@@ -7,6 +7,7 @@ use App\Metrika\helpers\Options;
 use App\Metrika\Report;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AuthorReportController extends Controller
 {
@@ -33,7 +34,7 @@ class AuthorReportController extends Controller
     {
         $result = AuthorReport::truncate();
 
-        return response(['result' => $result], 200);
+        return response(['result' => true], 200);
     }
 
 
@@ -70,6 +71,7 @@ class AuthorReportController extends Controller
         $result = json_decode($data);
 
 
+        $now = Carbon::now();
         foreach($result->data as $data => $item) {
 
             $dimensions = $item->dimensions;
@@ -82,7 +84,7 @@ class AuthorReportController extends Controller
 
 
             $rows[] = [
-                    'date' => Carbon::now(),
+                    'date' => $now,
                     'url' => $url,
                     'count' => $count
                 ];
@@ -91,12 +93,14 @@ class AuthorReportController extends Controller
         }
 
 
-        $result = false;
         if (!empty($rows)) {
-            $result = AuthorReport::insert($rows);
+
+            DB::table('author_reports')->insert($rows);
+            return response(['result' => true], 200);
         }
 
-        return response(['result' => $result], 200);
+        return response(['result' => false], 200);
+
 
     }
 }
