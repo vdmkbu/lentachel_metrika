@@ -11,6 +11,15 @@ use Illuminate\Support\Facades\DB;
 
 class AuthorReportController extends Controller
 {
+    private $options;
+    private $report;
+
+    public function __construct(Options $options, Report $report)
+    {
+        $this->options = $options;
+        $this->report = $report;
+    }
+
     /**
      * Получим сумму по полю count для переданного URL
      *
@@ -46,28 +55,21 @@ class AuthorReportController extends Controller
     public function store()
     {
 
-        $token = env('METRIKA_TOKEN');
-        $id = "28982035";
-
         $start = \request()->input('start');
         $end = \request()->input('end');
 
-        $options = new Options();
-        $options = $options->setDimensions("ym:s:startURLPathFull")
+        $options = $this->options->setDimensions("ym:s:startURLPathFull")
             ->setMetrics("ym:s:users")
             ->setGroup("all")
             ->setLimit(20000)
             ->setDate1($start)
             ->setDate2($end)
-            ->setId($id)
+            ->setId(env('METRIKA_ID'))
             ->setTitle("Адрес+страницы")
             ->setAccuracy(1)
             ->toArray();
 
-
-
-        $report = new Report($token, $id);
-        $data = $report->getStatByData($options);
+        $data = $this->report->getStatByData($options);
         $result = json_decode($data);
 
 
