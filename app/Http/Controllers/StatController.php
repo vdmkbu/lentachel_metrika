@@ -4,21 +4,29 @@ namespace App\Http\Controllers;
 
 use App\Metrika\helpers\Options;
 use App\Metrika\Report;
+use Exception;
 use Illuminate\Http\Request;
 
 class StatController extends Controller
 {
 
+    private $options;
+    private $report;
+
+    public function __construct(Options $options, Report $report)
+    {
+        $this->options = $options;
+        $this->report = $report;
+    }
+
     /**
      * Получаем статистику по посетителям за последние 12 месяцев
      *
      * @return string
+     * @throws Exception
      */
     public function getVisits()
     {
-        $token = env('METRIKA_TOKEN');
-        $id = "28982035";
-
 
         // TODO: готовим даты в отдельном классе или хелпере
         $now = new \DateTime();
@@ -35,19 +43,15 @@ class StatController extends Controller
         $date2 = $date2->format('Y-m-t');
 
 
-
-        $options = new Options();
-        $options = $options->setPreset("sources_summary")
+        $options = $this->options->setPreset("sources_summary")
                     ->setMetrics("ym:s:visits")
                     ->setGroup("month")
                     ->setDate1($date1)
                     ->setDate2($date2)
-                    ->setId($id)
+                    ->setId(env('METRIKA_ID'))
                     ->toArray();
 
-
-        $report = new Report($token, $id);
-        $data = $report->getStatByTime($options);
+        $data = $this->report->getStatByTime($options);
 
         $result = json_decode($data);
 
@@ -75,8 +79,6 @@ class StatController extends Controller
      */
     public function getInteres()
     {
-        $token = env('METRIKA_TOKEN');
-        $id = "28982035";
 
         $now = new \DateTime();
         $nowMonth = $now->format('m');
@@ -93,18 +95,16 @@ class StatController extends Controller
         $date2 = $date2->modify('-1month');
         $date2 = $date2->format('Y-m-t');
 
-        $options = new Options();
-        $options = $options->setPreset("interests")
+        $options = $this->options->setPreset("interests")
                         ->setMetrics("ym:s:visits")
                         ->setGroup("month")
                         ->setLimit(7)
                         ->setDate1($date1)
                         ->setDate2($date2)
-                        ->setId($id)
+                        ->setId(env('METRIKA_ID'))
                         ->toArray();
 
-        $report = new Report($token, $id);
-        $data = $report->getStatByData($options);
+        $data = $this->report->getStatByData($options);
         $result = json_decode($data);
 
         // общее количество
@@ -145,8 +145,6 @@ class StatController extends Controller
      */
     public function getGender()
     {
-        $token = env('METRIKA_TOKEN');
-        $id = "28982035";
 
         $now = new \DateTime();
         $nowMonth = $now->format('m');
@@ -162,17 +160,16 @@ class StatController extends Controller
         $date2 = $date2->modify('-1 month');
         $date2 = $date2->format('Y-m-t');
 
-        $options = new Options();
-        $options = $options->setDimensions("ym:s:gender")
+        $options = $this->options->setDimensions("ym:s:gender")
                             ->setMetrics("ym:s:womanPercentage,ym:s:manPercentage")
                             ->setGroup("all")
                             ->setDate1($date1)
                             ->setDate2($date2)
-                            ->setId($id)
+                            ->setId(env('METRIKA_ID'))
                             ->toArray();
 
-        $report = new Report($token, $id);
-        $data = $report->getStatByTime($options);
+
+        $data = $this->report->getStatByTime($options);
 
         $result = json_decode($data);
 
@@ -192,9 +189,6 @@ class StatController extends Controller
      */
     public function getAge()
     {
-        $token = env('METRIKA_TOKEN');
-        $id = "28982035";
-
         $now = new \DateTime();
         $nowMonth = $now->format('m');
         $oneYearAgo = $now->modify('-12 month');
@@ -209,17 +203,17 @@ class StatController extends Controller
         $date2 = $date2->modify('-1 month');
         $date2 = $date2->format('Y-m-t');
 
-        $options = new Options();
-        $options = $options->setDimensions("ym:s:ageInterval")
+
+        $options = $this->options->setDimensions("ym:s:ageInterval")
                             ->setMetrics("ym:s:under18AgePercentage,ym:s:upTo24AgePercentage,ym:s:upTo34AgePercentage,ym:s:upTo44AgePercentage,ym:s:over44AgePercentage")
                             ->setGroup("all")
                             ->setDate1($date1)
                             ->setDate2($date2)
-                            ->setId($id)
+                            ->setId(env('METRIKA_ID'))
                             ->toArray();
 
-        $report = new Report($token, $id);
-        $data = $report->getStatByTime($options);
+
+        $data = $this->report->getStatByTime($options);
 
         $result = json_decode($data);
 
