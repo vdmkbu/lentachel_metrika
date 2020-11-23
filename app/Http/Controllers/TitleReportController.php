@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Metrika\helpers\Options;
 use App\Metrika\Report;
+use App\Services\TitleReportService;
 use App\TitleReport;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class TitleReportController extends Controller
@@ -14,11 +13,13 @@ class TitleReportController extends Controller
 
     private Options $options;
     private Report $report;
+    private TitleReportService $service;
 
-    public function __construct(Options $options, Report $report)
+    public function __construct(Options $options, Report $report, TitleReportService $service)
     {
         $this->options = $options;
         $this->report = $report;
+        $this->service = $service;
     }
 
     /**
@@ -70,26 +71,7 @@ class TitleReportController extends Controller
 
 
         $data = $this->report->getStatByData($options);
-        $result = json_decode($data);
-
-        foreach($result->data as $data=>$item) {
-
-            $dimensions = $item->dimensions;
-            $metrics = $item->metrics;
-
-
-            $title = $dimensions[0]->name;
-            $count = $metrics[0]; // 0 - просмотры, 1 - уники
-            $current_date = Carbon::now();
-
-            $rows[] = [
-                'date' => $current_date,
-                'title' => $title,
-                'count' => $count
-            ];
-
-
-        }
+        $rows = $this->service->prepareTitleReportData($data);
 
 
         if (!empty($rows)) {
