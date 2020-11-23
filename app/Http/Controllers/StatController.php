@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Metrika\helpers\Options;
 use App\Metrika\Report;
 use Exception;
-use Illuminate\Http\Request;
 
 class StatController extends Controller
 {
@@ -28,19 +27,13 @@ class StatController extends Controller
     public function getVisits()
     {
 
-        // TODO: готовим даты в отдельном классе или хелпере
-        $now = new \DateTime();
-        $nowMonth = $now->format('m');
-        $oneYearAgo = $now->modify('-12 month');
-        $oneYearAgoString = $oneYearAgo->format('Y-m-d');
-        list($oneYearAgoY,$oneYearAgoM, $oneYearAgoD) = explode('-',$oneYearAgoString);
-        $oneYearAgo = "{$oneYearAgoY}-{$oneYearAgoM}-01";
-        $date1 = $oneYearAgo;
+        // получим данные за последний год:
 
-        // end - dont show current month, use flag "t"
-        $date2 = new \DateTime();
-        $date2 = $date2->modify('-1 month');
-        $date2 = $date2->format('Y-m-t');
+        // год назад с первого дня текущего месяца
+        $date1 = now()->modify('-12 month')->format('Y-m-01');
+
+        // последний день предыдущего месяца
+        $date2 = now()->modify('-1 month')->format('Y-m-t');
 
 
         $options = $this->options->setPreset("sources_summary")
@@ -80,20 +73,13 @@ class StatController extends Controller
     public function getInteres()
     {
 
-        $now = new \DateTime();
-        $nowMonth = $now->format('m');
-        $oneYearAgo = $now->modify('-12 month');
-        $oneYearAgoString = $oneYearAgo->format('Y-m-d');
-        list($oneYearAgoY,$oneYearAgoM,$oneYearAgoD) = explode('-',$oneYearAgoString);
-        $oneYearAgo = "{$oneYearAgoY}-{$oneYearAgoM}-01";
+        // получим данные за последний год:
 
-        //start
-        $date1 = $oneYearAgo;
+        // год назад с первого дня текущего месяца
+        $date1 = now()->modify('-12 month')->format('Y-m-01');
 
-        //end - dont show current month, use flag t
-        $date2 = new \DateTime();
-        $date2 = $date2->modify('-1month');
-        $date2 = $date2->format('Y-m-t');
+        // последний день предыдущего месяца
+        $date2 = now()->modify('-1 month')->format('Y-m-t');
 
         $options = $this->options->setPreset("interests")
                         ->setMetrics("ym:s:visits")
@@ -146,19 +132,14 @@ class StatController extends Controller
     public function getGender()
     {
 
-        $now = new \DateTime();
-        $nowMonth = $now->format('m');
-        $oneYearAgo = $now->modify('-12 month');
-        $oneYearAgoString = $oneYearAgo->format('Y-m-d');
-        list($oneYearAgoY,$oneYearAgoM, $oneYearAgoD) = explode('-',$oneYearAgoString);
-        $oneYearAgo = "{$oneYearAgoY}-{$oneYearAgoM}-01";
-        // start
-        $date1 = $oneYearAgo;
+        // получим данные за последний год:
 
-        // end - dont show current month, use flag "t"
-        $date2 = new \DateTime();
-        $date2 = $date2->modify('-1 month');
-        $date2 = $date2->format('Y-m-t');
+        // год назад с первого дня текущего месяца
+        $date1 = now()->modify('-12 month')->format('Y-m-01');
+
+        // последний день предыдущего месяца
+        $date2 = now()->modify('-1 month')->format('Y-m-t');
+
 
         $options = $this->options->setDimensions("ym:s:gender")
                             ->setMetrics("ym:s:womanPercentage,ym:s:manPercentage")
@@ -189,19 +170,13 @@ class StatController extends Controller
      */
     public function getAge()
     {
-        $now = new \DateTime();
-        $nowMonth = $now->format('m');
-        $oneYearAgo = $now->modify('-12 month');
-        $oneYearAgoString = $oneYearAgo->format('Y-m-d');
-        list($oneYearAgoY,$oneYearAgoM, $oneYearAgoD) = explode('-',$oneYearAgoString);
-        $oneYearAgo = "{$oneYearAgoY}-{$oneYearAgoM}-01";
-        // start
-        $date1 = $oneYearAgo;
+        // получим данные за последний год:
 
-        // end - dont show current month, use flag "t"
-        $date2 = new \DateTime();
-        $date2 = $date2->modify('-1 month');
-        $date2 = $date2->format('Y-m-t');
+        // год назад с первого дня текущего месяца
+        $date1 = now()->modify('-12 month')->format('Y-m-01');
+
+        // последний день предыдущего месяца
+        $date2 = now()->modify('-1 month')->format('Y-m-t');
 
 
         $options = $this->options->setDimensions("ym:s:ageInterval")
