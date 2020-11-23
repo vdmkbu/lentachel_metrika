@@ -19,6 +19,34 @@ class StatReportService
         return $visits;
     }
 
+    public function getInteres($data)
+    {
+        $result = json_decode($data);
+
+        // общее количество
+        $total = 0;
+
+        foreach($result->data as $id => $content) {
+
+            // название интереса: туризм, обустройство и т.д.
+            $dimensions = $content->dimensions;
+
+            // значение метрики "визиты" для интереса туризм, обустройство и т.д.
+            $metrics = $content->metrics;
+
+            // формируем результирующий массив: название интереса, кол-во визитов
+            foreach($dimensions as $dimId => $dim) {
+                $total += $metrics[0];
+                $interes[] = [$dim->name, (int)$metrics[0]];
+
+            }
+
+
+        }
+
+        return $interes;
+    }
+
     // получить массив с датами
     private function getTimeIntervals($data): array
     {

@@ -78,37 +78,9 @@ class StatController extends Controller
                         ->toArray();
 
         $data = $this->report->getStatByData($options);
-        $result = json_decode($data);
+        $interes = $this->service->getInteres($data);
 
-        // общее количество
-        $total = 0;
-
-
-        foreach($result->data as $id => $content) {
-
-            // название интереса: туризм, обустройство и т.д.
-            $dimensions = $content->dimensions;
-
-            // значение метрики "визиты" для интереса туризм, обустройство и т.д.
-            $metrics = $content->metrics;
-
-            // формируем результирующий массив: название интереса, кол-во визитов
-            foreach($dimensions as $dimId => $dim) {
-                $total += $metrics[0];
-                $arrayOfColumn[] = array($dim->name,$metrics[0]);
-
-            }
-
-
-        }
-
-        foreach($arrayOfColumn as $id=>&$data) {
-            $data[1] = (int)$data[1];
-        }
-
-
-
-        return response()->json($arrayOfColumn, 200);
+        return response()->json($interes, 200);
 
     }
 
