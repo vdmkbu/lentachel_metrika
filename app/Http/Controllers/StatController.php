@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Metrika\helpers\Options;
 use App\Metrika\Report;
+use App\Services\StatReportService;
 use Exception;
 
 class StatController extends Controller
@@ -11,11 +12,13 @@ class StatController extends Controller
 
     private Options $options;
     private Report $report;
+    private StatReportService $service;
 
-    public function __construct(Options $options, Report $report)
+    public function __construct(Options $options, Report $report, StatReportService $service)
     {
         $this->options = $options;
         $this->report = $report;
+        $this->service = $service;
     }
 
     /**
@@ -45,25 +48,9 @@ class StatController extends Controller
                     ->toArray();
 
         $data = $this->report->getStatByTime($options);
+        $visits = $this->service->getVisits($data);
 
-        $result = json_decode($data);
-
-        // получим описание всех временных интервалов 06.2018, 07.2018 и т.д.
-        $timeValueStorage = getTimeValueStorage($result->time_intervals);
-
-        // получим значения по метрике "посетители" для всех временных интевалов: 903000 для 06.2018, 2471000 для 07.2018 и т.д.
-        $metValueStorage = getMetValueStorageTotal($result->totals[0], $timeValueStorage);
-
-
-        // преобразуем в читаемую дату
-        foreach($metValueStorage as $index => $metValue) {
-            $prettyDate = getPrettyDate($metValue[0]);
-            $metValueStorage[$index][0] = $prettyDate;
-        }
-
-
-
-        return response()->json($metValueStorage, 200);
+        return response()->json($visits, 200);
     }
 
     /**
