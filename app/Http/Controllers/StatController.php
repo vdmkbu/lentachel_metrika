@@ -110,16 +110,9 @@ class StatController extends Controller
 
 
         $data = $this->report->getStatByTime($options);
+        $gender = $this->service->getGender($data);
 
-        $result = json_decode($data);
-
-        $woman = round($result->totals[0][0],1);
-        $man = round($result->totals[1][0],1);
-
-        $genderArray[] = array('Женский',$woman);
-        $genderArray[] = array('Мужской',$man);
-
-        return response()->json($genderArray, 200);
+        return response()->json($gender, 200);
 
     }
 

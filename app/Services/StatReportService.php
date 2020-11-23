@@ -47,6 +47,19 @@ class StatReportService
         return $interes;
     }
 
+    public function getGender($data)
+    {
+        $result = json_decode($data);
+
+        $woman = round($result->totals[0][0],1);
+        $man = round($result->totals[1][0],1);
+
+        $gender[] = ['Женский',$woman];
+        $gender[] = ['Мужской',$man];
+
+        return $gender;
+    }
+
     // получить массив с датами
     private function getTimeIntervals($data): array
     {
