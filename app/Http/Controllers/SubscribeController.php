@@ -4,52 +4,39 @@ namespace App\Http\Controllers;
 
 use App\Metrika\helpers\Options;
 use App\Metrika\Report;
-use Illuminate\Http\Request;
+use App\Services\SubscribeReportService;
+use Carbon\Carbon;
 
 class SubscribeController extends Controller
 {
     private Options $options;
     private Report $report;
+    private SubscribeReportService $service;
 
-    public function __construct(Options $options, Report $report)
+    public function __construct(Options $options, Report $report, SubscribeReportService $service)
     {
         $this->options = $options;
         $this->report = $report;
+        $this->service = $service;
     }
 
     public function getWeekly()
     {
 
-        $date = new \DateTime();
-
         // начало недели
-        $date1 = date("Y-m-d", strtotime("last Monday"));
+        $date1 = Carbon::parse(strtotime("last Monday"))->format('Y-m-d');
+
         // сегодня
-        $date2 = $date->format('Y-m-d');
+        $date2 = now()->format('Y-m-d');
 
-        // получим период между началом недели и текущим днем
-        $startDate = new \DateTime($date1);
-        $endDate = new \DateTime($date2);
-        $period = new \DatePeriod($startDate, new \DateInterval('P1D'), $endDate->modify('+1 day'));
-
-        foreach ($period as $date) {
-            $filterPeriodArray[] = $date->format('/Y/m/d/');
-        }
-
-        // логическое ИЛИ
-        if($filterPeriodArray)
-            $filterPeriod = implode('|',$filterPeriodArray);
-
-        // указываем метрику - в выборку попадают только те новости, которые вышли на текущей неделе
-        if($filterPeriod)
-            $filterPeriod = " and ym:pv:URLPathFull=~'.*($filterPeriod)'";
+        $filter = $this->service->filterPeriod($date1, $date2);
 
         // Источники - сводка
         $options = $this->options->setPreset("sources_summary")
             ->setDimensions("ym:pv:URLHash")
             ->setMetrics("ym:pv:pageviews")
             ->setGroup("day")
-            ->setFilters("ym:pv:URLPathFull=~'.*(/news)' and ym:pv:URLPathFull=~'.*(.html)'".$filterPeriod)
+            ->setFilters("ym:pv:URLPathFull=~'.*(/news)' and ym:pv:URLPathFull=~'.*(.html)'".$filter)
             ->setSort("-ym:pv:pageviews")
             ->setDate1($date1)
             ->setDate2($date2)
@@ -60,22 +47,16 @@ class SubscribeController extends Controller
             ->toArray();
 
         $data = $this->report->getStatByTime($options);
-        $result = json_decode($data);
+        $weekly = $this->service->prepareSubscribeReportData($data);
 
-        // получаем ссылки
-        $dimNameStorage = getDimNameStorage($result->data);
-
-        return response()->json($dimNameStorage);
+        return response()->json($weekly);
     }
 
     public function getDaily()
     {
-        $date = new \DateTime();
-        $date1 = $date->format('Y-m-d');
-        $date2 = $date1;
 
-        $filterDate = new \DateTime();
-        $filterDate = $filterDate->format('Y/m/d');
+        $date1 = $date2 = now()->format('Y-m-d');
+        $filter = now()->format('Y/m/d');
 
         // Источники - сводка
         $options = $this->options->setDate1($date1)
@@ -84,7 +65,7 @@ class SubscribeController extends Controller
             ->setMetrics("ym:pv:pageviews")
             ->setId(env('METRIKA_ID'))
             ->setGroup("day")
-            ->setFilters("ym:pv:URLPathFull=~'.*(/news/{$filterDate})' and ym:pv:URLPathFull=~'.*(.html)'")
+            ->setFilters("ym:pv:URLPathFull=~'.*(/news/{$filter})' and ym:pv:URLPathFull=~'.*(.html)'")
             ->setSort("-ym:pv:pageviews")
             ->setTable("hits")
             ->setTitle("Адрес+страницы")
@@ -92,13 +73,8 @@ class SubscribeController extends Controller
             ->toArray();
 
         $data = $this->report->getStatByTime($options);
-        $result = json_decode($data);
+        $daily = $this->service->prepareSubscribeReportData($data);
 
-        // получаем ссылки
-        $dimNameStorage = getDimNameStorage($result->data);
-
-        return response()->json($dimNameStorage);
-
-
+        return response()->json($daily);
     }
 }
