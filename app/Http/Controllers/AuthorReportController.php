@@ -5,19 +5,20 @@ namespace App\Http\Controllers;
 use App\AuthorReport;
 use App\Metrika\helpers\Options;
 use App\Metrika\Report;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
+use App\Services\AuthorReportService;
 use Illuminate\Support\Facades\DB;
 
 class AuthorReportController extends Controller
 {
     private Options $options;
     private Report $report;
+    private AuthorReportService $service;
 
-    public function __construct(Options $options, Report $report)
+    public function __construct(Options $options, Report $report, AuthorReportService $service)
     {
         $this->options = $options;
         $this->report = $report;
+        $this->service = $service;
     }
 
     /**
@@ -68,30 +69,7 @@ class AuthorReportController extends Controller
             ->toArray();
 
         $data = $this->report->getStatByData($options);
-        $result = json_decode($data);
-
-
-        $now = Carbon::now();
-        foreach($result->data as $data => $item) {
-
-            $dimensions = $item->dimensions;
-            $metrics = $item->metrics;
-
-
-
-            $url = $dimensions[0]->name;
-            $count = $metrics[0];
-
-
-            $rows[] = [
-                    'date' => $now,
-                    'url' => $url,
-                    'count' => $count
-                ];
-
-
-        }
-
+        $rows = $this->service->prepareAuthorReportData($data);
 
         if (!empty($rows)) {
 
