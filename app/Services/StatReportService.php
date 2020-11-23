@@ -60,6 +60,30 @@ class StatReportService
         return $gender;
     }
 
+    public function getAge($data)
+    {
+        $result = json_decode($data);
+
+        $ageValues = array_map(function ($value) {
+            return round($value[0],1);
+        }, $result->totals);
+
+        // получим все описания метрик - младше 18, 18-24 и т.д.
+        $dimensionNames = $this->getDimensionName($result->data);
+
+        $age = [];
+
+        // сформируем результирующий массив - метрики и проценты
+        foreach($dimensionNames as $index => $dimensionName) {
+            // если всех метрик больше, чем в элементов в valueStorage
+            if($index == count($ageValues)) break;
+
+            $age[] = [$dimensionName,$ageValues[$index]];
+        }
+
+        return $age;
+    }
+
     // получить массив с датами
     private function getTimeIntervals($data): array
     {
@@ -89,6 +113,26 @@ class StatReportService
         }
 
         return $metValueStorage;
+    }
+
+    // получить массив с значениями разделителей (прямые заходы, поисковые системы, etc)
+    private function getDimensionName($dataObject): array
+    {
+        $dimNameStorage = [];
+
+        foreach($dataObject as $dataObjectId => $dataObjectInfo)
+        {
+
+            // группировки
+            $dimensions = $dataObjectInfo->dimensions;
+            // имя группировки
+            $dimensionsName = $dimensions[0]->name;
+            //хранилище имен
+            $dimNameStorage[] = $dimensionsName;
+
+        }
+
+        return $dimNameStorage;
     }
 
     private function formatDate($value)

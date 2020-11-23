@@ -141,27 +141,8 @@ class StatController extends Controller
 
 
         $data = $this->report->getStatByTime($options);
+        $age = $this->service->getAge($data);
 
-        $result = json_decode($data);
-
-
-        // получения массив с процентам по возрастам
-        foreach($result->totals as $id=>$value) {
-            $valueStorage[] = round($value[0],1);
-        }
-
-        // получим все описания метрик - младше 18, 18-24 и т.д.
-        $dimNameStorage = getDimNameStorage($result->data);
-
-
-        // сформируем результирующий массив - метрики и проценты
-        foreach($dimNameStorage as $index => $column) {
-            // если всех метрик больше, чем в элементов в valueStorage
-            if($index == count($valueStorage)) break;
-
-            $ageArray[] = array($column,$valueStorage[$index]);
-        }
-
-        return response()->json($ageArray, 200);
+        return response()->json($age, 200);
     }
 }
