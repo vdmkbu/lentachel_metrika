@@ -30,9 +30,7 @@ class AuthorReportController extends Controller
         if(!$url)
             abort(404, "Не передан параметр url");
 
-        $sum = AuthorReport::where('url', 'like', '%'.$url.'%')->sum('count');
-
-        return $sum;
+        return AuthorReport::where('url', 'like', '%'.$url.'%')->sum('count');
     }
 
     /**
@@ -41,7 +39,7 @@ class AuthorReportController extends Controller
      */
     public function reset()
     {
-        $result = AuthorReport::truncate();
+        AuthorReport::truncate();
 
         return response(['result' => true], 200);
     }
